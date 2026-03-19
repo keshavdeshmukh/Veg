@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Vaibhav Vegetables</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f7f5f0; --white:#fff; --border:#e8e4dc; --text:#1c1a14; --muted:#8a8575;
+  --green:#2d6a4f; --green-light:#e8f5ee; --green-mid:#52b788;
+  --orange:#e07b39; --orange-light:#fdf0e8;
+  --red:#c94040; --red-light:#fdeaea;
+  --yellow:#d4a017; --yellow-light:#fdf8e8;
+  --radius:18px; --shadow:0 2px 16px rgba(28,26,20,0.07);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#e8e4dc;display:flex;justify-content:center;min-height:100vh}
+.phone{width:100%;max-width:400px;min-height:100vh;background:var(--bg);position:relative}
+
+/* SCREENS */
+.screen{display:none;flex-direction:column;min-height:100vh;animation:slideUp .3s ease;padding-bottom:80px}
+.screen.active{display:flex}
+@keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* HEADER */
+.app-header{background:var(--green);padding:52px 20px 18px;position:sticky;top:0;z-index:50}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px}
+.app-logo{font-family:'Fraunces',serif;font-size:20px;color:#fff;font-weight:700}
+.app-logo span{color:#95d5b2;font-style:italic}
+.header-date{font-size:11px;color:rgba(255,255,255,0.6);letter-spacing:.8px;text-transform:uppercase}
+.header-sub{font-size:12px;color:rgba(255,255,255,0.75);font-weight:300}
+
+/* STATS GRID */
+.dash-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px 16px 4px}
+.stat-card{background:var(--white);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);border:1px solid var(--border)}
+.stat-card .si{font-size:22px;margin-bottom:6px}
+.stat-card .sv{font-size:22px;font-weight:700;font-family:'Fraunces',serif}
+.stat-card .sl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-top:2px}
+.stat-card.green{background:var(--green-light);border-color:#b7e4c7}
+.stat-card.orange{background:var(--orange-light);border-color:#f5c9a0}
+.stat-card.yellow{background:var(--yellow-light);border-color:#f0dda0}
+.stat-card.red{background:var(--red-light);border-color:#f5b8b8}
+
+.section-title{padding:18px 16px 10px;font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}
+
+/* QUICK ACTIONS */
+.quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 4px}
+.qa-btn{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .15s;box-shadow:var(--shadow)}
+.qa-btn:active{transform:scale(0.97);background:var(--bg)}
+.qa-icon{font-size:24px}
+.qa-label{font-size:13px;font-weight:600}
+
+/* ORDER ROWS */
+.order-list,.full-order-list{padding:0 16px;display:flex;flex-direction:column;gap:10px}
+.order-row{background:var(--white);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;border:1px solid var(--border);box-shadow:var(--shadow);cursor:pointer;transition:all .15s}
+.order-row:active{background:var(--bg)}
+.order-avatar{width:40px;height:40px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.order-info{flex:1;min-width:0}
+.order-name{font-size:14px;font-weight:600}
+.order-items{font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.order-right{text-align:right}
+.order-amt{font-size:14px;font-weight:700;color:var(--green);font-family:'Fraunces',serif}
+.order-status{font-size:10px;font-weight:600;letter-spacing:.5px;padding:3px 8px;border-radius:20px;margin-top:3px;display:inline-block}
+.status-Pending{background:var(--yellow-light);color:var(--yellow)}
+.status-Delivered{background:var(--green-light);color:var(--green)}
+.status-Cancelled{background:var(--red-light);color:var(--red)}
+
+/* INVENTORY */
+.search-bar{margin:10px 16px 6px;background:var(--white);border:1px solid var(--border);border-radius:30px;padding:10px 16px;display:flex;align-items:center;gap:8px}
+.search-bar input{flex:1;border:none;outline:none;background:transparent;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--text)}
+.search-bar input::placeholder{color:var(--muted)}
+.inv-list{padding:8px 16px;display:flex;flex-direction:column;gap:10px}
+.inv-card{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden}
+.inv-card-top{display:flex;align-items:center;gap:14px;padding:14px 16px 10px}
+.veg-icon{width:48px;height:48px;border-radius:14px;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.inv-info{flex:1;min-width:0}
+.inv-name{font-size:15px;font-weight:700}
+.inv-price{font-size:13px;color:var(--green);font-weight:600;margin-top:2px}
+.inv-actions{display:flex;gap:8px}
+.inv-action-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:all .15s}
+.inv-action-btn:active{background:var(--border)}
+.stock-bar-wrap{padding:0 16px 14px}
+.stock-labels{display:flex;justify-content:space-between;margin-bottom:5px}
+.stock-label{font-size:11px;color:var(--muted)}
+.stock-qty{font-size:11px;font-weight:700}
+.stock-bar-bg{height:6px;background:var(--border);border-radius:10px;overflow:hidden}
+.stock-bar-fill{height:100%;border-radius:10px;transition:width .4s}
+.stock-ok{background:var(--green-mid)}.stock-low{background:var(--orange)}.stock-out{background:var(--red)}
+
+/* FILTER CHIPS */
+.orders-filter{display:flex;gap:8px;padding:12px 16px 8px;overflow-x:auto}
+.orders-filter::-webkit-scrollbar{display:none}
+.filter-chip{padding:7px 16px;border-radius:20px;white-space:nowrap;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;border:1.5px solid var(--border);background:var(--white);color:var(--muted)}
+.filter-chip.active{background:var(--green);border-color:var(--green);color:#fff}
+
+/* SALES */
+.sales-period{display:flex;gap:8px;padding:12px 16px 0}
+.period-btn{flex:1;padding:9px;border-radius:12px;border:1.5px solid var(--border);background:var(--white);font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .15s}
+.period-btn.active{background:var(--green);border-color:var(--green);color:#fff}
+.chart-wrap{margin:16px;background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:16px;box-shadow:var(--shadow)}
+.chart-title{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px}
+.bar-chart{display:flex;gap:8px;align-items:flex-end;height:100px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar-fill{width:100%;border-radius:6px 6px 0 0;background:var(--green-mid);transition:height .5s ease;min-height:4px}
+.bar-label{font-size:9px;color:var(--muted);font-weight:600}
+.bar-val{font-size:8px;color:var(--green);font-weight:700}
+.top-vegs{padding:0 16px;display:flex;flex-direction:column;gap:10px;margin-bottom:8px}
+.top-veg-row{background:var(--white);border-radius:14px;padding:12px 14px;border:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.top-veg-rank{width:24px;height:24px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.top-veg-info{flex:1}
+.top-veg-name{font-size:13px;font-weight:600}
+.top-veg-sold{font-size:11px;color:var(--muted);margin-top:2px}
+.top-veg-rev{font-size:14px;font-weight:700;color:var(--green);font-family:'Fraunces',serif}
+.progress-mini{height:4px;background:var(--border);border-radius:10px;margin-top:6px;overflow:hidden}
+.progress-mini-fill{height:100%;background:var(--green-mid);border-radius:10px}
+
+/* MODALS */
+.modal-overlay{position:fixed;inset:0;background:rgba(28,26,20,0.55);display:none;align-items:flex-end;justify-content:center;z-index:200;backdrop-filter:blur(3px)}
+.modal-overlay.open{display:flex;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal-sheet{background:var(--white);border-radius:24px 24px 0 0;width:100%;max-width:400px;padding:24px 20px 40px;animation:sheetUp .3s ease;max-height:90vh;overflow-y:auto}
+@keyframes sheetUp{from{transform:translateY(80px);opacity:0}to{transform:none;opacity:1}}
+.modal-handle{width:40px;height:4px;background:var(--border);border-radius:10px;margin:0 auto 20px}
+.modal-title{font-family:'Fraunces',serif;font-size:20px;font-weight:700;margin-bottom:20px}
+.form-group{margin-bottom:14px}
+.form-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:6px;display:block}
+.form-input{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color .2s}
+.form-input:focus{border-color:var(--green)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.emoji-picker{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.emoji-opt{width:40px;height:40px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;transition:all .15s}
+.emoji-opt.selected{border-color:var(--green);background:var(--green-light)}
+.form-submit{width:100%;padding:15px;background:var(--green);color:#fff;border:none;border-radius:var(--radius);font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:8px;transition:all .15s}
+.form-submit:active{transform:scale(0.98)}
+.add-btn{background:var(--green);color:#fff;border:none;padding:9px 16px;border-radius:30px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px}
+.add-btn:active{transform:scale(0.96)}
+
+/* ORDER VEG LIST */
+.order-veg-list{display:flex;flex-direction:column;gap:8px;max-height:220px;overflow-y:auto;margin-bottom:4px}
+.order-veg-item{display:flex;align-items:center;gap:10px;background:var(--bg);border-radius:12px;padding:10px 12px;border:1px solid var(--border)}
+.qty-control{display:flex;align-items:center;gap:8px}
+.qty-btn{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border);background:var(--white);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;font-weight:600;transition:all .15s}
+.qty-btn:active{background:var(--green);color:#fff;border-color:var(--green)}
+.qty-num{width:24px;text-align:center;font-size:14px;font-weight:700}
+
+/* NAV */
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:400px;background:var(--white);border-top:1px solid var(--border);display:flex;justify-content:space-around;align-items:center;padding:10px 0 24px;z-index:100;box-shadow:0 -4px 20px rgba(28,26,20,0.06)}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 16px}
+.nav-icon{font-size:22px;transition:transform .2s}
+.nav-label{font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);transition:color .2s}
+.nav-item.active .nav-label{color:var(--green)}
+.nav-item.active .nav-icon{transform:translateY(-2px)}
+
+/* LOADER */
+.loader{display:flex;align-items:center;justify-content:center;padding:32px;color:var(--muted);font-size:13px;gap:8px}
+.spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* TOAST */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--text);color:#fff;padding:11px 20px;border-radius:30px;font-size:13px;font-weight:500;opacity:0;pointer-events:none;transition:all .3s;z-index:999;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ERROR BANNER */
+.error-banner{background:var(--red-light);border:1px solid #f5b8b8;border-radius:12px;margin:10px 16px;padding:12px 14px;font-size:13px;color:var(--red);display:none}
+.error-banner.show{display:block}
+</style>
+</head>
+<body>
+<div class="phone">
+
+<!-- ══ DASHBOARD ══ -->
+<div class="screen active" id="dashScreen">
+  <div class="app-header">
+    <div class="header-top">
+      <div class="app-logo">Vaibhav<span> Vegetables</span></div>
+      <div class="header-date" id="todayDate"></div>
+    </div>
+    <div class="header-sub">📞 9284032311 &nbsp;|&nbsp; Welcome back 👋</div>
+  </div>
+  <div class="dash-stats">
+    <div class="stat-card green"><div class="si">💰</div><div class="sv" id="dashRevenue">—</div><div class="sl">Today's Sales</div></div>
+    <div class="stat-card orange"><div class="si">📦</div><div class="sv" id="dashOrders">—</div><div class="sl">Orders Today</div></div>
+    <div class="stat-card yellow"><div class="si">⚠️</div><div class="sv" id="dashLowStock">—</div><div class="sl">Low Stock</div></div>
+    <div class="stat-card red"><div class="si">🧺</div><div class="sv" id="dashProducts">—</div><div class="sl">Products</div></div>
+  </div>
+  <div class="section-title">Quick Actions</div>
+  <div class="quick-actions">
+    <div class="qa-btn" onclick="showScreen('inventoryScreen')"><div class="qa-icon">🥦</div><div class="qa-label">Inventory</div></div>
+    <div class="qa-btn" onclick="openNewOrderModal()"><div class="qa-icon">🛒</div><div class="qa-label">New Order</div></div>
+    <div class="qa-btn" onclick="showScreen('ordersScreen')"><div class="qa-icon">📋</div><div class="qa-label">All Orders</div></div>
+    <div class="qa-btn" onclick="showScreen('salesScreen')"><div class="qa-icon">📊</div><div class="qa-label">Sales Report</div></div>
+  </div>
+  <div class="section-title">Recent Orders</div>
+  <div class="order-list" id="dashOrderList"><div class="loader"><div class="spinner"></div>Loading…</div></div>
+</div>
+
+<!-- ══ INVENTORY ══ -->
+<div class="screen" id="inventoryScreen">
+  <div class="app-header">
+    <div class="header-top">
+      <div class="app-logo">Vaibhav<span> Vegetables</span></div>
+      <button class="add-btn" onclick="openAddProductModal()">＋ Add</button>
+    </div>
+    <div class="header-sub">Manage your vegetable stock</div>
+  </div>
+  <div class="search-bar"><span>🔍</span><input type="text" id="invSearch" placeholder="Search vegetables…" oninput="renderInventory()"></div>
+  <div class="error-banner" id="invError"></div>
+  <div class="inv-list" id="invList"><div class="loader"><div class="spinner"></div>Loading…</div></div>
+</div>
+
+<!-- ══ ORDERS ══ -->
+<div class="screen" id="ordersScreen">
+  <div class="app-header">
+    <div class="header-top">
+      <div class="app-logo">Vaibhav<span> Vegetables</span></div>
+      <button class="add-btn" onclick="openNewOrderModal()">＋ Order</button>
+    </div>
+    <div class="header-sub">Track all your orders</div>
+  </div>
+  <div class="orders-filter">
+    <div class="filter-chip active" onclick="filterOrders('All',this)">All</div>
+    <div class="filter-chip" onclick="filterOrders('Pending',this)">Pending</div>
+    <div class="filter-chip" onclick="filterOrders('Delivered',this)">Delivered</div>
+    <div class="filter-chip" onclick="filterOrders('Cancelled',this)">Cancelled</div>
+  </div>
+  <div class="error-banner" id="ordersError"></div>
+  <div class="full-order-list" id="fullOrderList" style="margin-top:8px"><div class="loader"><div class="spinner"></div>Loading…</div></div>
+</div>
+
+<!-- ══ SALES ══ -->
+<div class="screen" id="salesScreen">
+  <div class="app-header">
+    <div class="header-top">
+      <div class="app-logo">Vaibhav<span> Vegetables</span></div>
+      <div class="header-date">Sales Report</div>
+    </div>
+    <div class="header-sub">Track your earnings & top sellers</div>
+  </div>
+  <div class="sales-period">
+    <button class="period-btn active" onclick="changePeriod('week',this)">This Week</button>
+    <button class="period-btn" onclick="changePeriod('month',this)">This Month</button>
+    <button class="period-btn" onclick="changePeriod('year',this)">This Year</button>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px 16px 0">
+    <div class="stat-card green"><div class="si">💰</div><div class="sv" id="totalRevenue">—</div><div class="sl">Revenue</div></div>
+    <div class="stat-card orange"><div class="si">📦</div><div class="sv" id="totalOrders">—</div><div class="sl">Orders</div></div>
+  </div>
+  <div class="chart-wrap">
+    <div class="chart-title">Revenue — Last 7 Days</div>
+    <div class="bar-chart" id="salesChart"><div class="loader"><div class="spinner"></div></div></div>
+  </div>
+  <div class="section-title">Top Selling Vegetables</div>
+  <div class="top-vegs" id="topVegs"><div class="loader"><div class="spinner"></div>Loading…</div></div>
+</div>
+
+<!-- ══ NAV ══ -->
+<nav>
+  <div class="nav-item active" id="nav-dash" onclick="showScreen('dashScreen')"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+  <div class="nav-item" id="nav-inventory" onclick="showScreen('inventoryScreen')"><div class="nav-icon">🥦</div><div class="nav-label">Stock</div></div>
+  <div class="nav-item" id="nav-orders" onclick="showScreen('ordersScreen')"><div class="nav-icon">📋</div><div class="nav-label">Orders</div></div>
+  <div class="nav-item" id="nav-sales" onclick="showScreen('salesScreen')"><div class="nav-icon">📊</div><div class="nav-label">Sales</div></div>
+</nav>
+
+<!-- ══ ADD PRODUCT MODAL ══ -->
+<div class="modal-overlay" id="addProductModal" onclick="closeModal('addProductModal',event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Add Vegetable</div>
+    <div class="form-group"><label class="form-label">Choose Icon</label><div class="emoji-picker" id="emojiPicker"></div></div>
+    <div class="form-group"><label class="form-label">Vegetable Name</label><input class="form-input" id="pName" placeholder="e.g. Tomato"/></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Price (₹/kg)</label><input class="form-input" id="pPrice" type="number" placeholder="40"/></div>
+      <div class="form-group"><label class="form-label">Stock (kg)</label><input class="form-input" id="pStock" type="number" placeholder="50"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Min Stock Alert (kg)</label><input class="form-input" id="pMinStock" type="number" placeholder="10"/></div>
+    <button class="form-submit" onclick="saveProduct()">Save Vegetable ✓</button>
+  </div>
+</div>
+
+<!-- ══ NEW ORDER MODAL ══ -->
+<div class="modal-overlay" id="newOrderModal" onclick="closeModal('newOrderModal',event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">New Order</div>
+    <div class="form-group"><label class="form-label">Customer Name</label><input class="form-input" id="oCustomer" placeholder="e.g. Ravi Kumar"/></div>
+    <div class="form-group"><label class="form-label">Customer Phone (WhatsApp/SMS)</label><input class="form-input" id="oPhone" type="tel" placeholder="e.g. 9876543210"/></div>
+    <div class="form-group"><label class="form-label">Select Vegetables & Qty</label><div class="order-veg-list" id="orderVegList"></div></div>
+    <div style="background:var(--green-light);border-radius:12px;padding:12px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:13px;font-weight:600;color:var(--green)">Order Total</span>
+      <span style="font-size:18px;font-weight:700;color:var(--green);font-family:'Fraunces',serif" id="orderTotal">₹0</span>
+    </div>
+    <div class="error-banner" id="orderError"></div>
+    <button class="form-submit" id="orderSubmitBtn" onclick="saveOrder()">Place Order ✓</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// CONFIG — Change this after deploying to Render!
+// ═══════════════════════════════════════════════════
+const API = ''; // Leave empty — frontend is served by same server
+// If testing locally with separate servers: const API = 'http://localhost:5000';
+
+const OWNER_PHONE = '919284032311';
+const VEG_EMOJIS = ['🥦','🥕','🍅','🥬','🧅','🥔','🌽','🫑','🥒','🍆','🌶️','🧄','🫛','🥑','🍠'];
+let selectedEmoji = '🥦';
+let products = [];
+let orderQtys = {};
+let activeOrderFilter = 'All';
+let activePeriod = 'week';
+
+// ═══════════════════════════════════════════════════
+// API HELPERS
+// ═══════════════════════════════════════════════════
+async function apiFetch(path, options = {}) {
+  const res = await fetch(API + path, {
+    headers: { 'Content-Type': 'application/json' },
+    ...options,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || `Request failed (${res.status})`);
+  }
+  return res.json();
+}
+
+// ═══════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════
+const navMap = { dashScreen:'nav-dash', inventoryScreen:'nav-inventory', ordersScreen:'nav-orders', salesScreen:'nav-sales' };
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (navMap[id]) document.getElementById(navMap[id]).classList.add('active');
+  if (id === 'dashScreen')    loadDash();
+  if (id === 'inventoryScreen') loadInventory();
+  if (id === 'ordersScreen')  loadOrders();
+  if (id === 'salesScreen')   loadSales();
+  window.scrollTo(0, 0);
+}
+
+// ═══════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════
+async function loadDash() {
+  const now = new Date();
+  document.getElementById('todayDate').textContent = now.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+
+  try {
+    const stats = await apiFetch('/api/stats');
+    document.getElementById('dashRevenue').textContent  = '₹' + stats.todayRevenue;
+    document.getElementById('dashOrders').textContent   = stats.todayOrders;
+    document.getElementById('dashLowStock').textContent = stats.lowStock;
+    document.getElementById('dashProducts').textContent = stats.totalProducts;
+  } catch(e) { console.warn('Stats error', e); }
+
+  try {
+    const orders = await apiFetch('/api/orders');
+    const el = document.getElementById('dashOrderList');
+    const recent = orders.slice(0, 4);
+    el.innerHTML = recent.length
+      ? recent.map(o => orderRowHTML(o, false)).join('')
+      : '<div style="text-align:center;padding:24px;color:var(--muted);font-size:14px;">No orders yet</div>';
+  } catch(e) {
+    document.getElementById('dashOrderList').innerHTML = `<div class="loader" style="color:var(--red)">⚠️ ${e.message}</div>`;
+  }
+}
+
+function orderRowHTML(o, showActions = true) {
+  const itemNames = o.items.map(i => `${i.emoji} ${i.productName} (${i.qty}kg)`).join(', ');
+  const sc = o.status;
+  const t = new Date(o.createdAt || o.ts);
+  const timeStr = t.toLocaleString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+  const actionBtns = showActions ? `
+    ${o.status==='Pending'?`
+      <button style="font-size:11px;font-weight:600;color:var(--green);background:var(--green-light);border:none;border-radius:20px;padding:5px 12px;cursor:pointer" onclick="updateOrderStatus('${o._id}','Delivered')">✓ Delivered</button>
+      <button style="font-size:11px;font-weight:600;color:var(--red);background:var(--red-light);border:none;border-radius:20px;padding:5px 12px;cursor:pointer" onclick="updateOrderStatus('${o._id}','Cancelled')">✕ Cancel</button>`:''}
+    ${o.phone?`
+      <button style="font-size:17px;background:none;border:none;cursor:pointer" title="WhatsApp" onclick="waOrder('${o._id}')">📲</button>
+      <button style="font-size:17px;background:none;border:none;cursor:pointer" title="SMS" onclick="smsOrder('${o._id}')">💬</button>
+      <button style="font-size:17px;background:none;border:none;cursor:pointer" title="Call" onclick="window.open('tel:${o.phone}')">📞</button>`:''}
+  ` : '';
+  if (!showActions) {
+    return `<div class="order-row">
+      <div class="order-avatar">👤</div>
+      <div class="order-info"><div class="order-name">${o.customer}</div><div class="order-items">${itemNames}</div></div>
+      <div class="order-right"><div class="order-amt">₹${o.total}</div><div class="order-status status-${sc}">${sc}</div></div>
+    </div>`;
+  }
+  return `<div class="order-row" style="flex-direction:column;align-items:stretch;">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="order-avatar">👤</div>
+      <div class="order-info">
+        <div class="order-name">${o.customer} <span style="font-size:11px;color:var(--muted);font-weight:400">#${o.orderNumber||''}</span></div>
+        <div class="order-items">${itemNames}</div>
+      </div>
+      <div class="order-right"><div class="order-amt">₹${o.total}</div><div class="order-status status-${sc}">${sc}</div></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);align-items:center">
+      <span style="font-size:11px;color:var(--muted);flex:1">${timeStr}</span>
+      ${actionBtns}
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════
+// INVENTORY
+// ═══════════════════════════════════════════════════
+async function loadInventory() {
+  hideError('invError');
+  document.getElementById('invList').innerHTML = '<div class="loader"><div class="spinner"></div>Loading…</div>';
+  try {
+    products = await apiFetch('/api/products');
+    renderInventory();
+  } catch(e) {
+    showError('invError', e.message);
+    document.getElementById('invList').innerHTML = '';
+  }
+}
+
+function renderInventory() {
+  const q = (document.getElementById('invSearch').value || '').toLowerCase();
+  const filtered = products.filter(p => p.name.toLowerCase().includes(q));
+  const el = document.getElementById('invList');
+  if (!filtered.length) { el.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted)">No vegetables found 🥲</div>'; return; }
+  el.innerHTML = filtered.map(p => {
+    const pct = Math.min(100, Math.round(p.stock / Math.max(p.minStock * 3, 1) * 100));
+    const cls = p.stock <= 0 ? 'stock-out' : p.stock <= p.minStock ? 'stock-low' : 'stock-ok';
+    const statusLabel = p.stock <= 0 ? 'Out of Stock' : p.stock <= p.minStock ? 'Low Stock' : 'In Stock';
+    const statusColor = p.stock <= 0 ? 'var(--red)' : p.stock <= p.minStock ? 'var(--orange)' : 'var(--green-mid)';
+    return `<div class="inv-card">
+      <div class="inv-card-top">
+        <div class="veg-icon">${p.emoji}</div>
+        <div class="inv-info">
+          <div class="inv-name">${p.name}</div>
+          <div class="inv-price">₹${p.price}/kg &nbsp;·&nbsp; <span style="color:${statusColor};font-size:11px;font-weight:600">${statusLabel}</span></div>
+        </div>
+        <div class="inv-actions">
+          <div class="inv-action-btn" onclick="adjustStock('${p._id}',-1)" title="−1kg">−</div>
+          <div class="inv-action-btn" onclick="adjustStock('${p._id}',1)" title="+1kg">＋</div>
+          <div class="inv-action-btn" onclick="deleteProduct('${p._id}')">🗑</div>
+        </div>
+      </div>
+      <div class="stock-bar-wrap">
+        <div class="stock-labels"><span class="stock-label">Stock</span><span class="stock-qty">${p.stock} kg</span></div>
+        <div class="stock-bar-bg"><div class="stock-bar-fill ${cls}" style="width:${pct}%"></div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function adjustStock(id, delta) {
+  const p = products.find(p => p._id === id);
+  if (!p) return;
+  const newStock = Math.max(0, p.stock + delta);
+  try {
+    const updated = await apiFetch(`/api/products/${id}`, { method:'PATCH', body: JSON.stringify({ stock: newStock }) });
+    p.stock = updated.stock;
+    renderInventory();
+    showToast(delta > 0 ? `+1kg added to ${p.name}` : `-1kg from ${p.name}`);
+  } catch(e) { showToast('Error: ' + e.message); }
+}
+
+async function deleteProduct(id) {
+  if (!confirm('Delete this vegetable?')) return;
+  try {
+    await apiFetch(`/api/products/${id}`, { method:'DELETE' });
+    products = products.filter(p => p._id !== id);
+    renderInventory();
+    showToast('Product deleted');
+  } catch(e) { showToast('Error: ' + e.message); }
+}
+
+// ═══════════════════════════════════════════════════
+// ADD PRODUCT
+// ═══════════════════════════════════════════════════
+function openAddProductModal() {
+  selectedEmoji = '🥦';
+  ['pName','pPrice','pStock','pMinStock'].forEach(id => document.getElementById(id).value = '');
+  buildEmojiPicker();
+  document.getElementById('addProductModal').classList.add('open');
+}
+function buildEmojiPicker() {
+  document.getElementById('emojiPicker').innerHTML = VEG_EMOJIS.map(e =>
+    `<div class="emoji-opt${e===selectedEmoji?' selected':''}" onclick="selectEmoji('${e}')">${e}</div>`).join('');
+}
+function selectEmoji(e) { selectedEmoji = e; buildEmojiPicker(); }
+
+async function saveProduct() {
+  const name     = document.getElementById('pName').value.trim();
+  const price    = parseFloat(document.getElementById('pPrice').value);
+  const stock    = parseFloat(document.getElementById('pStock').value);
+  const minStock = parseFloat(document.getElementById('pMinStock').value) || 10;
+  if (!name || isNaN(price) || isNaN(stock)) { showToast('Please fill all fields'); return; }
+  try {
+    const p = await apiFetch('/api/products', { method:'POST', body: JSON.stringify({ emoji:selectedEmoji, name, price, stock, minStock }) });
+    products.push(p);
+    closeModal('addProductModal');
+    renderInventory();
+    showToast(`${selectedEmoji} ${name} added!`);
+    loadDash();
+  } catch(e) { showToast('Error: ' + e.message); }
+}
+
+// ═══════════════════════════════════════════════════
+// ORDERS
+// ═══════════════════════════════════════════════════
+async function loadOrders() {
+  hideError('ordersError');
+  document.getElementById('fullOrderList').innerHTML = '<div class="loader"><div class="spinner"></div>Loading…</div>';
+  try {
+    const orders = await apiFetch(`/api/orders?status=${activeOrderFilter}`);
+    const el = document.getElementById('fullOrderList');
+    el.innerHTML = orders.length
+      ? orders.map(o => orderRowHTML(o, true)).join('')
+      : '<div style="text-align:center;padding:32px;color:var(--muted)">No orders found 🧺</div>';
+  } catch(e) {
+    showError('ordersError', e.message);
+    document.getElementById('fullOrderList').innerHTML = '';
+  }
+}
+function filterOrders(status, el) {
+  activeOrderFilter = status;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  loadOrders();
+}
+async function updateOrderStatus(id, status) {
+  try {
+    await apiFetch(`/api/orders/${id}`, { method:'PATCH', body: JSON.stringify({ status }) });
+    showToast(`Order marked as ${status}`);
+    loadOrders(); loadDash();
+  } catch(e) { showToast('Error: ' + e.message); }
+}
+
+// ═══════════════════════════════════════════════════
+// NEW ORDER
+// ═══════════════════════════════════════════════════
+async function openNewOrderModal() {
+  document.getElementById('oCustomer').value = '';
+  document.getElementById('oPhone').value = '';
+  hideError('orderError');
+  // Load fresh products
+  try {
+    products = await apiFetch('/api/products');
+  } catch(e) {}
+  orderQtys = {};
+  products.forEach(p => orderQtys[p._id] = 0);
+  renderOrderVegList();
+  document.getElementById('newOrderModal').classList.add('open');
+}
+function renderOrderVegList() {
+  document.getElementById('orderVegList').innerHTML = products.map(p => `
+    <div class="order-veg-item">
+      <span style="font-size:20px">${p.emoji}</span>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600">${p.name}</div>
+        <div style="font-size:10px;color:var(--muted)">₹${p.price}/kg · ${p.stock}kg left</div>
+      </div>
+      <div class="qty-control">
+        <div class="qty-btn" onclick="changeQty('${p._id}',-1)">−</div>
+        <div class="qty-num" id="qty-${p._id}">${orderQtys[p._id]||0}</div>
+        <div class="qty-btn" onclick="changeQty('${p._id}',1)">＋</div>
+      </div>
+    </div>`).join('');
+  updateOrderTotal();
+}
+function changeQty(id, d) {
+  const p = products.find(p => p._id === id);
+  if (!p) return;
+  orderQtys[id] = Math.max(0, Math.min(p.stock, (orderQtys[id]||0) + d));
+  const el = document.getElementById('qty-' + id);
+  if (el) el.textContent = orderQtys[id];
+  updateOrderTotal();
+}
+function updateOrderTotal() {
+  const total = products.reduce((s, p) => s + (orderQtys[p._id]||0) * p.price, 0);
+  document.getElementById('orderTotal').textContent = '₹' + total;
+}
+
+async function saveOrder() {
+  const customer = document.getElementById('oCustomer').value.trim();
+  const phone    = document.getElementById('oPhone').value.trim();
+  if (!customer) { showError('orderError', 'Please enter customer name'); return; }
+  const items = products
+    .filter(p => (orderQtys[p._id]||0) > 0)
+    .map(p => ({ productId: p._id, qty: orderQtys[p._id] }));
+  if (!items.length) { showError('orderError', 'Add at least one item'); return; }
+
+  const btn = document.getElementById('orderSubmitBtn');
+  btn.textContent = 'Placing Order…'; btn.disabled = true;
+  hideError('orderError');
+
+  try {
+    const newOrder = await apiFetch('/api/orders', { method:'POST', body: JSON.stringify({ customer, phone, items }) });
+    closeModal('newOrderModal');
+    showToast(`Order placed for ${customer} — ₹${newOrder.total}`);
+    loadDash(); loadInventory(); loadOrders();
+
+    if (phone) {
+      const bill = buildBillText(newOrder);
+      setTimeout(() => {
+        if (confirm(`Send WhatsApp bill to ${customer}?`)) sendWhatsApp(phone, bill);
+        if (confirm(`Send SMS to ${customer}?`))           sendSMS(phone, bill);
+      }, 400);
+    }
+  } catch(e) {
+    showError('orderError', e.message);
+  } finally {
+    btn.textContent = 'Place Order ✓'; btn.disabled = false;
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// SALES
+// ═══════════════════════════════════════════════════
+async function loadSales() {
+  try {
+    const data = await apiFetch(`/api/sales?period=${activePeriod}`);
+    document.getElementById('totalRevenue').textContent = '₹' + data.totalRevenue;
+    document.getElementById('totalOrders').textContent  = data.totalOrders;
+    // Bar chart
+    const maxVal = Math.max(...data.dayData, 1);
+    document.getElementById('salesChart').innerHTML = data.dayData.map((v, i) =>
+      `<div class="bar-col">
+        <div class="bar-val">${v > 0 ? '₹'+v : ''}</div>
+        <div class="bar-fill" style="height:${Math.round(v/maxVal*80)+4}px;background:${v===maxVal&&v>0?'var(--green)':'var(--green-mid)'}"></div>
+        <div class="bar-label">${data.dayLabels[i]}</div>
+      </div>`).join('');
+    // Top vegs
+    const maxRev = data.topVegs.length ? data.topVegs[0].rev : 1;
+    document.getElementById('topVegs').innerHTML = data.topVegs.length
+      ? data.topVegs.map((v, i) =>
+        `<div class="top-veg-row">
+          <div class="top-veg-rank">${i+1}</div>
+          <div class="top-veg-info">
+            <div class="top-veg-name">${v.emoji} ${v.name}</div>
+            <div class="top-veg-sold">${v.qty} kg sold</div>
+            <div class="progress-mini"><div class="progress-mini-fill" style="width:${Math.round(v.rev/maxRev*100)}%"></div></div>
+          </div>
+          <div class="top-veg-rev">₹${v.rev}</div>
+        </div>`).join('')
+      : '<div style="text-align:center;padding:24px;color:var(--muted)">No sales data yet</div>';
+  } catch(e) {
+    document.getElementById('topVegs').innerHTML = `<div class="loader" style="color:var(--red)">⚠️ ${e.message}</div>`;
+  }
+}
+function changePeriod(p, el) {
+  activePeriod = p;
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  loadSales();
+}
+
+// ═══════════════════════════════════════════════════
+// WHATSAPP / SMS
+// ═══════════════════════════════════════════════════
+function buildBillText(o) {
+  const lines = o.items.map(i => `${i.emoji} ${i.productName}: ${i.qty}kg x ₹${i.price} = ₹${i.qty*i.price}`).join('\n');
+  const date  = new Date(o.createdAt||Date.now()).toLocaleString('en-IN',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  return `🌿 *Vaibhav Vegetables*\n📞 9284032311\n${'─'.repeat(26)}\n📋 Order #${o.orderNumber||''}\n👤 ${o.customer}\n📅 ${date}\n${'─'.repeat(26)}\n${lines}\n${'─'.repeat(26)}\n💰 *Total: ₹${o.total}*\n\nThank you! 🙏`;
+}
+function sendWhatsApp(phone, text) {
+  const clean = phone.replace(/\D/g,'');
+  const num = clean.startsWith('91') ? clean : '91'+clean;
+  window.open(`https://wa.me/${num}?text=${encodeURIComponent(text)}`, '_blank');
+}
+function sendSMS(phone, text) {
+  const clean = phone.replace(/\D/g,'');
+  const short = `Vaibhav Vegetables | Order ₹${text.match(/Total: ₹(\d+)/)?.[1]||''} | Thank you! 📞9284032311`;
+  window.open(`sms:${clean}?body=${encodeURIComponent(short)}`, '_blank');
+}
+
+// Load the order object to send WA/SMS from orders list
+async function waOrder(id) {
+  try {
+    const orders = await apiFetch('/api/orders');
+    const o = orders.find(x => x._id === id);
+    if (o && o.phone) sendWhatsApp(o.phone, buildBillText(o));
+  } catch(e) {}
+}
+async function smsOrder(id) {
+  try {
+    const orders = await apiFetch('/api/orders');
+    const o = orders.find(x => x._id === id);
+    if (o && o.phone) sendSMS(o.phone, buildBillText(o));
+  } catch(e) {}
+}
+
+// ═══════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════
+function closeModal(id, e) {
+  if (!e || e.target === document.getElementById(id)) document.getElementById(id).classList.remove('open');
+}
+function showToast(msg) {
+  const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+function showError(id, msg) { const el = document.getElementById(id); el.textContent = '⚠️ ' + msg; el.classList.add('show'); }
+function hideError(id) { const el = document.getElementById(id); el.textContent=''; el.classList.remove('show'); }
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+loadDash();
+</script>
+</body>
+</html>
